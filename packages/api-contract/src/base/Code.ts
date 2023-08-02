@@ -12,7 +12,7 @@ import type { AbiConstructor, BlueprintOptions } from '../types.js';
 import type { MapConstructorExec } from './types.js';
 
 import { SubmittableResult } from '@polkadot/api';
-import { BN_ZERO, compactAddLength, isUndefined, isWasm, u8aToU8a } from '@polkadot/util';
+import { BN_ZERO, compactAddLength, isU8a, isUndefined, u8aToU8a } from '@polkadot/util';
 
 import { applyOnEvent } from '../util.js';
 import { Base } from './Base.js';
@@ -44,12 +44,12 @@ export class Code<ApiType extends ApiTypes> extends Base<ApiType> {
   constructor (api: ApiBase<ApiType>, abi: string | Record<string, unknown> | Abi, wasm: Uint8Array | string | Buffer | null | undefined, decorateMethod: DecorateMethod<ApiType>) {
     super(api, abi, decorateMethod);
 
-    this.code = isWasm(this.abi.info.source.wasm)
+    this.code = isU8a(this.abi.info.source.wasm)
       ? this.abi.info.source.wasm
       : u8aToU8a(wasm);
 
-    if (!isWasm(this.code)) {
-      throw new Error('No WASM code provided');
+    if (!isU8a(this.code)) {
+      throw new Error('No code provided');
     }
 
     this.abi.constructors.forEach((c): void => {
